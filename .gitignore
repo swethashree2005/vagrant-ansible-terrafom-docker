@@ -1,0 +1,96 @@
+# =====================
+# Python
+# =====================
+# OS / editor junk
+*.swp
+*.swo
+*.bak
+*.tmp
+.viminfo
+.cache/
+.sudo_as_admin_successful
+
+# SSH and secrets
+.ssh/
+*.pem
+*.key
+.env
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.sqlite3
+*.log
+*.env
+.venv/
+venv/
+env/
+ENV/
+
+# =====================
+# Flask / Local
+# =====================
+instance/
+*.db
+*.sqlite
+*.sqlite3
+
+# =====================
+# Terraform
+# =====================
+*.tfstate
+*.tfstate.*
+.terraform/
+.terraform.lock.hcl
+.terraform.d
+*.egg-info/
+*.egg
+.bash_logout
+.bashrc
+.profile
+
+crash.log
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+
+# =====================
+# Vagrant
+# =====================
+.vagrant/
+
+# =====================
+# Docker
+# =====================
+*.tar
+*.pid
+*.log
+docker-compose.override.yml
+
+# =====================
+# System / Editor
+# =====================
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+=======
+# Ansible (if you don’t want to push playbooks)
+ansible/
+
+# Local configs
+.vagrant/
+.vbox_version
+
+# Logs
+*.log
+ .bash_logout
+ .bashrc
+ .gitignore
+ .profile
+ .terraform.d/checkpoint_cache
+ .terraform.d/checkpoint_signature
