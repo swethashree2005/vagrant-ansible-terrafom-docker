@@ -340,6 +340,8 @@ So when you run `terraform destroy`, it only destroys what’s in the state (`do
 
 **Alternative solution for github-runner setup**
 
+```bash
+
 cat <<EOF > /home/vagrant/ansible/install_github_runner.yml
 ---
 - name: Install GitHub Actions Runner
@@ -448,7 +450,7 @@ cat <<EOF > /home/vagrant/ansible/install_github_runner.yml
 EOF
 
 
-
+```
 
 
 
