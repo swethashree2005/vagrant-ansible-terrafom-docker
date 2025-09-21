@@ -365,3 +365,5 @@ cat <<'EOF' >  install_github_runner_container.yml
         var: logs.stdout
 
 EOF
+
+sudo chown -R vagrant:vagrant /home/vagrant/ansible
