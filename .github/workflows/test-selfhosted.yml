@@ -1,0 +1,8 @@
+name: Test Self-hosted
+on: [workflow_dispatch]
+jobs:
+  test:
+    runs-on: [self-hosted, lab]
+    steps:
+      - uses: actions/checkout@v4
+      - run: echo "Runner OK on $(uname -a)"
