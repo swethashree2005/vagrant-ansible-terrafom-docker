@@ -49,14 +49,14 @@ resource "docker_container" "quiz_app" {
 }
 
 
-variable "app_port" {
-  description = "Port to expose quiz app"
-  type        = number
-  default     = 8080
-}
+# variable "app_port" {
+#   description = "Port to expose quiz app"
+#   type        = number
+#   default     = 8080
+# }
 
 
 
-data "external" "host_ip" {
-  program = ["${path.module}/get_ip.sh"]
-}
+# data "external" "host_ip" {
+#   program = ["${path.module}/get_ip.sh"]
+# }

@@ -12,26 +12,25 @@ Vagrant.configure("2") do |config|
   config.vm.synced_folder "./Iac-deployment", "/home/vagrant/Iac-deployment"
 
   config.vm.provision "shell", inline: <<-SHELL
-  echo "Cleaning up ^M characters in /vagrant (excluding .git)..."
-  find /vagrant -type f ! -path "*/.git/*" -exec bash -c '
-    for file; do
-      if file "$file" | grep -q text; then
-        sed -i "s/\\r//g" "$file"
-      fi
-    done
-  ' bash {} +
+  set -e
+  echo "Normalizing line endings (CRLF->LF) and fixing permissions..."
+  for dir in /vagrant /home/vagrant/terraform-docker /home/vagrant/Iac-deployment; do
+    if [ -d "$dir" ]; then
+      echo " - Cleaning $dir"
+      find "$dir" -type f ! -path "*/.git/*" -exec bash -c '
+        for file; do
+          if file "$file" | grep -q text; then
+            sed -i "s/\\r//g" "$file"
+          fi
+        done
+      ' bash {} +
+    fi
+  done
+  # Ensure provision scripts are executable
+  if [ -d /vagrant/provision ]; then
+    chmod +x /vagrant/provision/*.sh || true
+  fi
   SHELL
-
-
-
-
-  # # Set up passwordless SSH for vagrant user
-  # config.vm.provision "shell", inline: <<-SHELL
-  #   mkdir -p /home/vagrant/.ssh
-  #   echo "ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEA6NF8iallvQVp22WDkTkyrtvp9eWW6A8YVr+kz4TjGYe7gHzIw+niNltGEFHzD8+v1I2pFmXnbY3Wf9JOLTT5rx1HqGTYNudERe7N3+hxgzm0xx+3e8G6N4Udk+bwJ5/AT5Q9D2jOY2buYJNoy0t9J9EJLZafCO6wScKj0f5EYv7N9q/8tL/dYI1M1XJhD6uJq5d9jH3e+SZk9c2K6PvM3pITp+TjvOjgkAVCk1NC+8ew==" >> /home/vagrant/.ssh/authorized_keys
-  #   chmod 600 /home/vagrant/.ssh/authorized_keys
-  #   chown -R vagrant:vagrant /home/vagrant/.ssh
-  # SHELL
 
   # Create GitHub Actions workflow file
   config.vm.provision "shell", inline: <<-SHELL
@@ -67,11 +66,6 @@ jobs:
         run: terraform apply -auto-approve
 EOF
   SHELL
-
-  # # Provisioners
-  # config.vm.provision "shell", path: "provision/install_ansible.sh"
-  # config.vm.provision "shell", path: "provision/install_docker.sh"  
-  # config.vm.provision "shell", path: "provision/install_terraform.sh"
 
 config.vm.provision "ansible",  type: "shell", path: "provision/install_ansible.sh"
 config.vm.provision "docker",   type: "shell", path: "provision/install_docker.sh"

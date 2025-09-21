@@ -79,8 +79,11 @@ Thumbs.db
 .vscode/
 *.swp
 =======
-# Ansible (if you don’t want to push playbooks)
-ansible/
+# Ansible (default was to ignore). We now keep playbooks in version control.
+#!ansible/
+!ansible/
+!ansible/*.yml
+!ansible/**/*.yml
 
 # Local configs
 .vagrant/
