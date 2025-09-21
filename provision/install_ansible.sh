@@ -306,7 +306,7 @@ EOF
 # GITHUB_REPO=
 # GITHUB_PAT=
 
-cat <<'EOF' >  install_github_runner_container.yml
+cat <<'EOF' >  /home/vagrant/ansible/install_github_runner_container.yml
 ---
 - name: Install containerized GitHub Actions Runner
   hosts: runner
