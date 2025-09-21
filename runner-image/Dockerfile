@@ -12,8 +12,37 @@ ENV DEBIAN_FRONTEND=noninteractive \
     RUNNER_ARCH=${RUNNER_ARCH}
 
 RUN apt-get update -y && apt-get install -y \
-    curl ca-certificates jq tar git \
+    curl ca-certificates jq tar git gnupg unzip \
     && rm -rf /var/lib/apt/lists/*
+
+# Install Node.js 20 (for GitHub JavaScript actions like checkout/setup-terraform)
+RUN set -eux; \
+  export DEBIAN_FRONTEND=noninteractive; \
+  apt-get update -y; \
+  mkdir -p /etc/apt/keyrings; \
+  curl -fsSL https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key -o /tmp/nodesource.gpg.key; \
+  gpg --yes --batch --dearmor -o /etc/apt/keyrings/nodesource.gpg /tmp/nodesource.gpg.key; \
+  echo "deb [signed-by=/etc/apt/keyrings/nodesource.gpg] https://deb.nodesource.com/node_20.x nodistro main" > /etc/apt/sources.list.d/nodesource.list; \
+  apt-get update -y; \
+  apt-get install -y nodejs; \
+  node -v; npm -v
+
+## Install Terraform (pinned) so jobs don’t need network
+RUN set -eux; \
+  TF_VERSION=1.6.6; \
+  dpkg_arch="$(dpkg --print-architecture)"; \
+  case "$dpkg_arch" in \
+    amd64) tf_arch="linux_amd64" ;; \
+    arm64) tf_arch="linux_arm64" ;; \
+    armhf) tf_arch="linux_arm" ;; \
+    *) echo "Unsupported architecture for Terraform: $dpkg_arch" >&2; exit 1 ;; \
+  esac; \
+  url="https://releases.hashicorp.com/terraform/${TF_VERSION}/terraform_${TF_VERSION}_${tf_arch}.zip"; \
+  echo "Downloading $url"; \
+  curl -fsSL -o /tmp/terraform.zip "$url"; \
+  unzip -o /tmp/terraform.zip -d /usr/local/bin; \
+  rm -f /tmp/terraform.zip; \
+  terraform -version
 
 WORKDIR /opt/actions-runner
 

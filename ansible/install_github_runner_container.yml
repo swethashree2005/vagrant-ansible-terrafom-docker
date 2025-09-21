@@ -33,8 +33,12 @@
           -e GITHUB_PAT="{{ lookup('env','GITHUB_PAT') | default('', true) }}" \
           -e RUNNER_TOKEN="{{ lookup('env','RUNNER_TOKEN') | default('', true) }}" \
           -e RUNNER_ALLOW_RUNASROOT=1 \
+          -e TF_PLUGIN_CACHE_DIR="/tfplugin-cache" \
+          -e RUNNER_TOOL_CACHE="/runner/_toolcache" \
           -e RUNNER_LABELS="{{ runner_labels }}" \
           -e RUNNER_WORKDIR="{{ runner_workdir }}" \
+          -v /opt/tfplugin-cache:/tfplugin-cache \
+          -v /opt/gha-toolcache:/runner/_toolcache \
           -v /var/run/docker.sock:/var/run/docker.sock \
           {{ image_ref }}
       args:
