@@ -336,123 +336,6 @@ So when you run `terraform destroy`, it only destroys what’s in the state (`do
    terraform destroy # will now clean up both image & container
    ```
 
----
-
-**Alternative solution for github-runner setup**
-
-```bash
-
-cat <<EOF > /home/vagrant/ansible/install_github_runner.yml
----
-- name: Install GitHub Actions Runner
-  hosts: all
-  become: yes
-
-  vars:
-    # github_repo: "deenamanick/vagrant-ansible-terrafom-docker"
-    github_repo: "{{ lookup('env','GITHUB_REPO') }}"
-    runner_version: "2.328.0"
-    runner_dir: "/opt/actions-runner"
-    github_pat: "{{ lookup('env','GITHUB_PAT') }}"
-    cache_dir: "/home/vagrant/ansible/cache"   # cache on controller
-
-  pre_tasks:
-    - name: Ensure cache dir exists on controller
-      delegate_to: localhost
-      file:
-        path: "{{ cache_dir }}"
-        state: directory
-        mode: '0755'
-
-    - name: Download runner once to controller cache
-      delegate_to: localhost
-      get_url:
-        url: "https://github.com/actions/runner/releases/download/v{{ runner_version }}/actions-runner-linux-x64-{{ runner_version }}.tar.gz"
-        dest: "{{ cache_dir }}/actions-runner-linux-x64-{{ runner_version }}.tar.gz"
-        mode: '0644'
-        timeout: 600
-      register: download_result
-      retries: 5
-      delay: 20
-      until: download_result is succeeded
-
-  tasks:
-    - name: Install dependencies
-      apt:
-        name: [ "curl", "tar", "jq", "ca-certificates" ]
-        state: present
-        update_cache: yes
-
-    - name: Create runner directory on target
-      file:
-        path: "{{ runner_dir }}"
-        state: directory
-        owner: vagrant
-        group: vagrant
-        mode: '0755'
-
-    - name: Copy cached runner tarball to target
-      copy:
-        src: "{{ cache_dir }}/actions-runner-linux-x64-{{ runner_version }}.tar.gz"
-        dest: "{{ runner_dir }}/runner.tar.gz"
-        mode: '0644'
-
-    - name: Extract GitHub runner
-      unarchive:
-        src: "{{ runner_dir }}/runner.tar.gz"
-        dest: "{{ runner_dir }}"
-        remote_src: yes
-        creates: "{{ runner_dir }}/config.sh"
-
-    - name: Ensure runner directory owned by vagrant
-      file:
-        path: "{{ runner_dir }}"
-        state: directory
-        recurse: yes
-        owner: vagrant
-        group: vagrant
-
-    - name: Ensure /home/vagrant is owned by vagrant
-      file:
-        path: /home/vagrant
-        state: directory
-        recurse: yes
-        owner: vagrant
-        group: vagrant
-
-    - name: Request registration token from GitHub API
-      uri:
-        url: "https://api.github.com/repos/{{ github_repo }}/actions/runners/registration-token"
-        method: POST
-        headers:
-          Authorization: "token {{ github_pat }}"
-          Accept: "application/vnd.github.v3+json"
-        status_code: 201
-      register: reg_token
-
-    - name: Configure GitHub runner
-      command: >
-        ./config.sh --url https://github.com/{{ github_repo }}
-        --token {{ reg_token.json.token }} --unattended
-      args:
-        chdir: "{{ runner_dir }}"
-      become_user: vagrant
-
-    - name: Install runner as service
-      command: ./svc.sh install
-      args:
-        chdir: "{{ runner_dir }}"
-
-    - name: Start runner service
-      command: ./svc.sh start
-      args:
-        chdir: "{{ runner_dir }}"
-EOF
-
-
-```
-
----
 
 ## 🔹 Run the GitHub Runner from local registry (offline-friendly)
 
@@ -478,7 +361,7 @@ Optional: host in a local registry for your lab server:
 ```bash
 docker run -d --restart=always -p 5000:5000 --name registry registry:2
 docker pull <DOCKERHUB_USER>/gha-runner:2.328.0
-docker tag <DOCKERHUB_USER>/gha-runner:2.328.0 localhost:5000/gha-runner:2.328.0
+docker tag <DOCKERHUB_USER>/gha-runner:2.328.0 localhost:5000/gha-runner-new:2.328.0
 docker push localhost:5000/gha-runner:2.328.0
 ```
 
@@ -499,11 +382,11 @@ sudo systemctl restart docker
 ```
 # Print the best-guess LAB Ip
 
-# Print the best-guess LAB IP
+```bash
 ip route get 8.8.8.8 2>/dev/null | awk '{for(i=1;i<=NF;i++) if($i=="src"){print $(i+1); exit}}' \
   || hostname -I | awk '{print $1}'
 
-
+```
 
 ### 2) Provision the containerized runner (students)
 
@@ -531,6 +414,8 @@ Check that the container is running on the target VM and appears as a self-hoste
 
 ```bash
 docker ps -a | grep gha-runner
+
+docker logs -a gha-runner
 ```
 
 ### Notes
