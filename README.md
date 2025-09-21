@@ -485,12 +485,25 @@ docker push localhost:5000/gha-runner:2.328.0
 If clients use an insecure local registry, configure `/etc/docker/daemon.json` on each client:
 
 ```json
+# on student machine (one-time)
+sudo mkdir -p /etc/docker
+sudo tee /etc/docker/daemon.json >/dev/null <<'JSON'
 {
-  "insecure-registries": ["<LAB_SERVER_IP>:5000"]
+  "insecure-registries": ["<labIP>:5000"],
+  "registry-mirrors": ["<labIP>:5000"]
 }
-```
+JSON
+sudo systemctl daemon-reload
+sudo systemctl restart docker
 
-Then restart Docker: `sudo systemctl restart docker`.
+```
+# Print the best-guess LAB Ip
+
+# Print the best-guess LAB IP
+ip route get 8.8.8.8 2>/dev/null | awk '{for(i=1;i<=NF;i++) if($i=="src"){print $(i+1); exit}}' \
+  || hostname -I | awk '{print $1}'
+
+
 
 ### 2) Provision the containerized runner (students)
 
@@ -507,7 +520,7 @@ Run the Ansible playbook:
 
 ```bash
 cd ansible
-ansible-playbook install_github_runner_container.yml -l runner
+ansible-playbook install_github_runner_container.yml --extra-vars 'runner_labels=self-hosted,lab,mytag runner_workdir=/runner/_work' -e "image_ref=192.168.1.15:5000/gha-runner-new:2.328.0"
 ```
 
 By default the playbook pulls `localhost:5000/gha-runner:2.328.0`. Change `image_ref` in `ansible/install_github_runner_container.yml` to use your Docker Hub image if you prefer.
