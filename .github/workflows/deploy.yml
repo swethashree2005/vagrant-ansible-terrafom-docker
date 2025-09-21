@@ -13,6 +13,11 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v4
 
+      - name: Install prerequisites (unzip)
+        run: |
+          apt-get update -y
+          apt-get install -y unzip
+
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
         with:
