@@ -372,8 +372,8 @@ If clients use an insecure local registry, configure `/etc/docker/daemon.json` o
 sudo mkdir -p /etc/docker
 sudo tee /etc/docker/daemon.json >/dev/null <<'JSON'
 {
-  "insecure-registries": ["<labIP>:5000"],
-  "registry-mirrors": ["<labIP>:5000"]
+  "insecure-registries": ["192.168.3.134:5000"],
+  "registry-mirrors": ["192.168.3.134:5000"]
 }
 JSON
 sudo systemctl daemon-reload
