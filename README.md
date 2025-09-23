@@ -72,6 +72,12 @@ The goal is to give students a **hands-on CI/CD experience** where pushing code 
   ```bash
   ansible --version
   ```
+
+  ```bash
+  ansible all -m ping
+
+  ```
+
    You should see similar output.
   
    <img width="1150" height="245" alt="image" src="https://github.com/user-attachments/assets/5f958dce-977d-477f-9aab-78ac2cd9be49" />
