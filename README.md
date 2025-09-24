@@ -200,6 +200,94 @@ vagrant ssh
 
 
 ---
+**Additional Terraform Tasks**
+
+
+## 🟢 Simple Terraform Tasks
+
+### 1. **Hello World with Terraform**
+
+* Create a file `main.tf`.
+* Define a provider (like Docker).
+* Just run `terraform init` + `terraform plan`.
+  👉 Goal: Get used to Terraform commands.
+
+---
+
+### 2. **Create a Local File**
+
+```hcl
+resource "local_file" "example" {
+  content  = "Hello from Terraform!"
+  filename = "hello.txt"
+}
+```
+
+👉 Task: Run `terraform apply` → check that `hello.txt` is created.
+
+---
+
+### 3. **Deploy a Docker Nginx Container**
+
+```hcl
+provider "docker" {}
+
+resource "docker_image" "nginx" {
+  name = "nginx:latest"
+}
+
+resource "docker_container" "nginx" {
+  image = docker_image.nginx.latest
+  name  = "nginx-server"
+  ports {
+    internal = 80
+    external = 8080
+  }
+}
+```
+
+👉 Task: Run `terraform apply`, then open `http://localhost:8080`.
+
+---
+
+### 4. **Create Two Docker Containers**
+
+* Use Nginx (port 8081) and Redis (port 6379).
+* Just like the **multi-container setup** we discussed earlier, but simpler.
+
+👉 Task: Verify with `docker ps`.
+
+---
+
+### 5. **Variable Usage**
+
+```hcl
+variable "instance_name" {
+  default = "my-container"
+}
+
+resource "docker_container" "nginx" {
+  image = docker_image.nginx.latest
+  name  = var.instance_name
+  ports {
+    internal = 80
+    external = 8082
+  }
+}
+```
+
+👉 Task: Change the variable value → reapply → container should have new name.
+
+---
+
+### 6. **Destroy & Reapply**
+
+* Run `terraform destroy` to remove resources.
+* Run `terraform apply` again to recreate.
+  👉 Task: Learn how IaC makes infra reproducible.
+
+---
+
 
 ## 🔹 **Lets practice github Actions / CICD**
 
