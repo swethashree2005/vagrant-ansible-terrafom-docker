@@ -200,7 +200,7 @@ vagrant ssh
 
 
 ---
-**Additional Terraform Tasks**
+### **Additional Terraform Tasks**
 
 
 ## 🟢 Simple Terraform Tasks
@@ -288,6 +288,82 @@ resource "docker_container" "nginx" {
 
 ---
 
+### **Challenge Tasks**
+
+
+### 1. **Deploy Two Nginx Containers on Different Ports**
+
+* Use Terraform to run **two Nginx containers**.
+* Map them to ports `8081` and `8082`.
+  👉 Challenge: Check both in the browser.
+
+---
+
+### 2. **Use a Variable for Container Name**
+
+* Create a variable called `container_name`.
+* Use it in your container resource.
+  👉 Challenge: Change the variable and see Terraform rename the container.
+
+---
+
+### 3. **Create a Simple Local File**
+
+```hcl
+resource "local_file" "note" {
+  content  = "Terraform is fun!"
+  filename = "note.txt"
+}
+```
+
+👉 Challenge: Run `terraform apply`, then `terraform destroy` to see how IaC manages files.
+
+---
+
+### 4. **Count Challenge – Multiple Containers**
+
+* Use `count = 3` in your resource block.
+* Spin up **3 Nginx containers**.
+  👉 Challenge: Name them `nginx-1`, `nginx-2`, `nginx-3`.
+
+---
+
+### 5. **Custom HTML in Nginx**
+
+* Create a local `index.html` file.
+* Mount it into the Nginx container using Terraform volume mapping.
+  👉 Challenge: Show a custom welcome page in the browser.
+
+---
+
+### 6. **Output Challenge**
+
+* Add an `output.tf` file.
+* Print the container’s **name** and **port** after `terraform apply`.
+  👉 Challenge: Verify outputs appear on screen.
+
+---
+
+### 7. **Destroy & Recreate**
+
+* Deploy a container.
+* Run `terraform destroy`.
+* Run `terraform apply` again.
+  👉 Challenge: Notice how Terraform recreates the same resource automatically.
+
+---
+
+These are **lightweight challenges**—they give students practice with:
+
+* Variables
+* Outputs
+* Count parameter
+* Mounting files
+* Terraform lifecycle (`apply/destroy/reapply`)
+
+
+
+---
 
 ## 🔹 **Lets practice github Actions / CICD**
 
