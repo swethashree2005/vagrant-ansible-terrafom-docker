@@ -563,7 +563,7 @@ Run the Ansible playbook:
 
 ```bash
 cd ansible
-ansible-playbook install_github_runner_container.yml --extra-vars 'runner_labels=self-hosted,lab,mytag runner_workdir=/runner/_work' -e "image_ref=192.168.1.15:5000/gha-runner-new:2.328.0"
+ansible-playbook install_github_runner_container.yml --extra-vars 'runner_labels=self-hosted,lab,mytag runner_workdir=/runner/_work' -e "image_ref=deenamanick/gha-runner-new:2.328.0"
 ```
 
 By default the playbook pulls `localhost:5000/gha-runner:2.328.0`. Change `image_ref` in `ansible/install_github_runner_container.yml` to use your Docker Hub image if you prefer.
