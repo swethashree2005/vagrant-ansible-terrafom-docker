@@ -351,16 +351,6 @@ resource "local_file" "note" {
 * Run `terraform apply` again.
   👉 Challenge: Notice how Terraform recreates the same resource automatically.
 
----
-
-These are **lightweight challenges**—they give students practice with:
-
-* Variables
-* Outputs
-* Count parameter
-* Mounting files
-* Terraform lifecycle (`apply/destroy/reapply`)
-
 
 
 ---
