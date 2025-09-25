@@ -355,6 +355,48 @@ resource "local_file" "note" {
 
 ---
 
+
+## 🔹 **Lets practice github Actions / CICD**
+
+
+### 🔹 1. Check if a remote exists
+
+```bash
+git remote -v
+```
+
+* If you see `origin  https://github.com/...` → you’re good.
+* If **nothing shows**, add it:
+
+```bash
+git remote add origin https://github.com/username/repo.git
+```
+
+---
+
+### 🔹 2. Set your identity (global)
+
+```bash
+git config --global user.name "Your Name"
+git config --global user.email "your_email@example.com"
+```
+
+
+---
+
+### 🔹 3. Cache credentials (HTTPS only)
+
+So you don’t type your token each time:
+
+```bash
+git config --global credential.helper cache
+```
+
+
+---
+
+
+
 ## 🔹 **Lets practice github Actions / CICD**
 
 1. **Create token**
