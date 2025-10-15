@@ -2,61 +2,43 @@ terraform {
   required_providers {
     docker = {
       source  = "kreuzwerker/docker"
-      version = "~> 3.0.2"
+      version = "~> 3.0"
     }
   }
 }
 
-provider "docker" {
-  host = "unix:///var/run/docker.sock"
-}
+provider "docker" {}
 
-
-
-resource "docker_image" "quiz_app" {
-  name = "quiz-app:latest"
-
-  build {
-    context    = "${path.module}/terraform-deployment"
-    dockerfile = "Dockerfile"
-  }
-
-  triggers = {
-   # app_code = filesha256("${path.module}/../terraform-deployment/app.py")
-   app_code = filesha256("/home/vagrant/terraform-docker/terraform-deployment/app.py")
-
-  }
+# ✅ Pull Nginx image
+resource "docker_image" "nginx_image" {
+  name         = "nginx:latest"
   keep_locally = false
 }
 
+# ✅ Pull Redis image
+resource "docker_image" "redis_image" {
+  name         = "redis:latest"
+  keep_locally = false
+}
 
-## running docker
-resource "docker_container" "quiz_app" {
-  name  = "quiz_app"
-  image = docker_image.quiz_app.image_id
-  must_run = true
-  restart = "always"
+# ✅ Create Nginx container
+resource "docker_container" "nginx_container" {
+  name  = "nginx-server"
+  image = docker_image.nginx_image.image_id
 
   ports {
-    internal = 8080
-    external = 8080
-  }
-
-  lifecycle {
-    replace_triggered_by = [docker_image.quiz_app]
-    create_before_destroy  = false   # destroy old before creating new
+    internal = 80
+    external = 8081
   }
 }
 
+# ✅ Create Redis container
+resource "docker_container" "redis_container" {
+  name  = "redis-server"
+  image = docker_image.redis_image.image_id
 
-# variable "app_port" {
-#   description = "Port to expose quiz app"
-#   type        = number
-#   default     = 8080
-# }
-
-
-
-# data "external" "host_ip" {
-#   program = ["${path.module}/get_ip.sh"]
-# }
+  ports {
+    internal = 6379
+    external = 6379
+  }
+}
